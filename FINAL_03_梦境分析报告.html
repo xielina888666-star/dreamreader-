@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>梦境分析</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #1e1a2e;
+    --bg-card: #2d2740;
+    --bg-inner: #24203a;
+    --line: #4a4060;
+    --accent: #ffd4a3;
+    --accent-soft: #e8b88a;
+    --text-main: #f5e6d3;
+    --text-sub: #b8a8c9;
+    --text-mute: #8a7fa0;
+    --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+    --sans: 'Noto Sans SC', 'PingFang SC', -apple-system, sans-serif;
+    --display: 'Cormorant Garamond', 'Times New Roman', serif;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    background: var(--bg-deep);
+    color: var(--text-main);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* 背景星点 */
+  .stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0.3;
+  }
+
+  .star:nth-child(1) { top: 5%; left: 10%; }
+  .star:nth-child(2) { top: 8%; right: 15%; animation: twinkle 3s ease-in-out infinite; }
+  .star:nth-child(3) { top: 25%; left: 8%; animation: twinkle 4s ease-in-out infinite 1s; }
+  .star:nth-child(4) { top: 45%; right: 10%; opacity: 0.25; }
+  .star:nth-child(5) { top: 65%; left: 12%; animation: twinkle 3.5s ease-in-out infinite 0.5s; }
+  .star:nth-child(6) { top: 85%; right: 14%; opacity: 0.25; }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.5; }
+  }
+
+  .container {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 20px 16px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ============ 顶部标题 ============ */
+  .header {
+    text-align: center;
+    padding: 20px 0 26px;
+  }
+
+  .header-title {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text-main);
+    letter-spacing: 6px;
+  }
+
+  .header-date {
+    font-family: var(--display);
+    font-size: 12px;
+    color: var(--text-mute);
+    margin-top: 6px;
+    letter-spacing: 4px;
+    font-style: italic;
+  }
+
+  .header-divider {
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+    margin: 12px auto 0;
+    opacity: 0.7;
+  }
+
+  /* ============ 卡片通用 ============ */
+  .card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 28px 22px;
+    margin-bottom: 14px;
+    position: relative;
+  }
+
+  .card-title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-main);
+    text-align: center;
+    letter-spacing: 4px;
+  }
+
+  .card-title-deco {
+    width: 30px;
+    height: 1px;
+    background: var(--accent);
+    margin: 12px auto 0;
+  }
+
+  /* ============ 模块 1 · 状态 ============ */
+  .module-state {
+    padding: 30px 22px 32px;
+  }
+
+  .module-label {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-sub);
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  .state-word {
+    font-family: var(--serif);
+    font-size: 46px;
+    font-weight: 500;
+    color: var(--accent);
+    text-align: center;
+    margin-top: 18px;
+    letter-spacing: 12px;
+    padding-left: 12px; /* 补偿字间距导致的视觉偏移 */
+  }
+
+  .cat-illustration {
+    margin: 26px auto 18px;
+    width: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cat-illustration svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .slogan {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-style: italic;
+    color: var(--text-main);
+    text-align: center;
+    opacity: 0.9;
+    letter-spacing: 2px;
+    margin-top: 8px;
+  }
+
+  /* ============ 模块 2 · 人格 ============ */
+  .personality-name {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 500;
+    color: var(--accent);
+    text-align: center;
+    margin-top: 16px;
+    margin-bottom: 10px;
+    letter-spacing: 5px;
+    padding-left: 5px;
+  }
+
+  .match-row {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--text-main);
+    margin-top: 22px;
+    letter-spacing: 1px;
+  }
+
+  .match-row .pct {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .portrait-label {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 300;
+    letter-spacing: 1px;
+    margin-top: 20px;
+  }
+
+  .portrait-text {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-style: italic;
+    color: var(--text-main);
+    margin-top: 10px;
+    letter-spacing: 1px;
+  }
+
+  /* ============ 模块 3 · 梦境解读 ============ */
+  .analysis-content {
+    text-align: center;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--text-main);
+    font-weight: 300;
+    line-height: 2;
+    margin-top: 22px;
+    letter-spacing: 0.5px;
+  }
+
+  .analysis-content p {
+    margin: 0;
+  }
+
+  /* ============ 模块 4 · 六维关联度评分 ============ */
+  .dimensions {
+    margin-top: 22px;
+  }
+
+  .dim-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2px;
+    margin-bottom: 6px;
+  }
+
+  .dim-name {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--text-main);
+    font-weight: 400;
+  }
+
+  .dim-value {
+    font-family: var(--display);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 2px;
+  }
+
+  .dim-value.h {
+    color: var(--accent);
+  }
+
+  .dim-value.m {
+    color: var(--text-sub);
+  }
+
+  .dim-value.l {
+    color: var(--text-mute);
+  }
+
+  .dim-bar {
+    width: 100%;
+    height: 3px;
+    background: var(--bg-deep);
+    border-radius: 1.5px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+
+  .dim-fill {
+    height: 100%;
+    border-radius: 1.5px;
+    width: 0;
+    animation: fillBar 1.2s ease-out forwards;
+    animation-delay: 0.6s;
+  }
+
+  .dim-fill.h { background: var(--accent); }
+  .dim-fill.m { background: var(--text-sub); }
+  .dim-fill.l { background: var(--text-mute); }
+
+  @keyframes fillBar {
+    to { width: var(--final-width); }
+  }
+
+  .dim-footnote {
+    font-size: 10px;
+    color: var(--text-mute);
+    margin-top: 8px;
+    font-weight: 300;
+    line-height: 1.6;
+    text-align: left;
+  }
+
+  /* ============ 模块 5 · 解语花 ============ */
+  .flower-icon {
+    text-align: center;
+    margin: 22px 0 18px;
+  }
+
+  .flower-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .healing-block {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--text-main);
+    text-align: center;
+    line-height: 2.2;
+    letter-spacing: 2px;
+  }
+
+  .healing-block .accent {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .healing-block .gap {
+    height: 14px;
+  }
+
+  /* ============ 模块 6 · 友情提示 ============ */
+  .disclaimer {
+    padding: 24px 22px;
+  }
+
+  .disclaimer-title {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--text-sub);
+    font-weight: 400;
+    letter-spacing: 1px;
+  }
+
+  .disclaimer-text {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 300;
+    margin-top: 14px;
+    line-height: 2;
+  }
+
+  .disclaimer-text p {
+    margin: 0;
+  }
+
+  /* ============ 底部按钮 ============ */
+  .actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 15px 0;
+    border-radius: 30px;
+    font-size: 15px;
+    font-family: var(--sans);
+    font-weight: 400;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg-deep);
+    font-weight: 500;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--text-sub);
+    color: var(--text-main);
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-soft);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+  }
+
+  /* ============ 入场动画 ============ */
+  .card {
+    opacity: 0;
+    transform: translateY(14px);
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+
+  .card:nth-child(2) { animation-delay: 0.05s; }
+  .card:nth-child(3) { animation-delay: 0.15s; }
+  .card:nth-child(4) { animation-delay: 0.25s; }
+  .card:nth-child(5) { animation-delay: 0.35s; }
+  .card:nth-child(6) { animation-delay: 0.45s; }
+  .card:nth-child(7) { animation-delay: 0.55s; }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .actions {
+    opacity: 0;
+    animation: fadeUp 0.6s ease-out 0.65s forwards;
+  }
+</style>
+</head>
+<body>
+
+<!-- 背景星点 -->
+<div class="stars">
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+</div>
+
+<div class="container">
+
+  <!-- 顶部 -->
+  <div class="header">
+    <div class="header-title">梦境分析</div>
+    <div class="header-date">2026 · 04 · 23</div>
+    <div class="header-divider"></div>
+  </div>
+
+  <!-- 模块 1 · 状态 -->
+  <div class="card module-state">
+    <div class="module-label">你当前的状态：</div>
+    <div class="state-word">绷不住了</div>
+
+    <div class="cat-illustration">
+      <svg viewBox="0 0 130 170" xmlns="http://www.w3.org/2000/svg">
+        <!-- 纸箱盖板（左） -->
+        <path d="M 15 40 L 0 15 L 0 -8 L 15 15 Z" fill="none" stroke="#f5e6d3" stroke-width="1.6" stroke-linejoin="round"/>
+        <!-- 纸箱盖板（右） -->
+        <path d="M 115 40 L 130 15 L 130 -8 L 115 15 Z" fill="none" stroke="#f5e6d3" stroke-width="1.6" stroke-linejoin="round"/>
+        <!-- 箱子顶部 -->
+        <path d="M 15 40 L 40 15 L 90 15 L 115 40" fill="none" stroke="#f5e6d3" stroke-width="1.6" stroke-linejoin="round"/>
+        <!-- 箱子主体 -->
+        <rect x="15" y="40" width="100" height="120" fill="none" stroke="#f5e6d3" stroke-width="1.6"/>
+        <!-- 胶带装饰 -->
+        <line x1="65" y1="40" x2="65" y2="160" stroke="#f5e6d3" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.4"/>
+        <!-- 内部阴影 -->
+        <rect x="16" y="41" width="98" height="36" fill="#1a1825" opacity="0.55"/>
+        <!-- 左耳 -->
+        <path d="M 40 55 L 45 36 L 55 58 Z" fill="none" stroke="#f5e6d3" stroke-width="1.5" stroke-linejoin="round"/>
+        <!-- 右耳 -->
+        <path d="M 75 58 L 85 36 L 90 55 Z" fill="none" stroke="#f5e6d3" stroke-width="1.5" stroke-linejoin="round"/>
+        <!-- 头顶曲线 -->
+        <path d="M 40 55 Q 65 51 90 55" fill="none" stroke="#f5e6d3" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- 左眼 -->
+        <ellipse cx="52" cy="68" rx="5" ry="7" fill="#f5e6d3"/>
+        <!-- 右眼 -->
+        <ellipse cx="78" cy="68" rx="5" ry="7" fill="#f5e6d3"/>
+        <!-- 瞳孔 -->
+        <ellipse cx="52" cy="69" rx="1.5" ry="5" fill="#1e1a2e"/>
+        <ellipse cx="78" cy="69" rx="1.5" ry="5" fill="#1e1a2e"/>
+        <!-- 反光小点 -->
+        <circle cx="53" cy="66" r="0.8" fill="#ffffff"/>
+        <circle cx="79" cy="66" r="0.8" fill="#ffffff"/>
+        <!-- 标签 -->
+        <rect x="72" y="130" width="36" height="14" fill="none" stroke="#f5e6d3" stroke-width="0.5" opacity="0.5"/>
+        <text x="90" y="139" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="7.5" fill="#f5e6d3" opacity="0.55" font-style="italic">do not disturb</text>
+      </svg>
+    </div>
+
+    <div class="slogan">"惹不起，还躲不起？"</div>
+  </div>
+
+  <!-- 模块 2 · 人格 -->
+  <div class="card">
+    <div class="module-label">你当前的潜意识人格倾向：</div>
+    <div class="personality-name">鸵鸟先生 / 小姐</div>
+
+    <div class="match-row">画像契合度 <span class="pct">82%</span></div>
+
+    <div class="portrait-label">该潜意识人格画像：</div>
+    <div class="portrait-text">不解决问题，解决提出问题的自己</div>
+  </div>
+
+  <!-- 模块 3 · 梦境解读 -->
+  <div class="card">
+    <div class="card-title">梦境解读</div>
+    <div class="card-title-deco"></div>
+
+    <div class="analysis-content">
+      <p>这个梦整体是强烈的恐惧和紧迫感，说明你最近虽然表面撑着，但内心一直绷着，有一件事让你睡不踏实。黑蛇在梦里常常象征一种模糊的、说不清但一直存在的压力——可能不是某个具体的人或事，而是一种氛围、一种你一直回避却逃不掉的感觉。梦里你"跑得很慢"，这不是身体的慢，是潜意识里那种"我动不了、我应付不来"的无力感。躲进小房间关上门，是潜意识在保护你。它不是在说你很弱，而是在提醒你：有些事，该允许自己先喘口气再面对。</p>
+    </div>
+  </div>
+
+  <!-- 模块 4 · 六维关联度评分 -->
+  <div class="card">
+    <div class="card-title">六维关联度评分</div>
+    <div class="card-title-deco"></div>
+
+    <div class="dimensions">
+      <div class="dim-row">
+        <span class="dim-name">压力指数</span>
+        <span class="dim-value h">H · 82</span>
+      </div>
+      <div class="dim-bar"><div class="dim-fill h" style="--final-width: 82%"></div></div>
+
+      <div class="dim-row">
+        <span class="dim-name">情绪稳定度</span>
+        <span class="dim-value l">L · 38</span>
+      </div>
+      <div class="dim-bar"><div class="dim-fill l" style="--final-width: 38%"></div></div>
+
+      <div class="dim-row">
+        <span class="dim-name">内心冲突程度</span>
+        <span class="dim-value h">H · 75</span>
+      </div>
+      <div class="dim-bar"><div class="dim-fill h" style="--final-width: 75%"></div></div>
+
+      <div class="dim-row">
+        <span class="dim-name">睡眠指数</span>
+        <span class="dim-value m">M · 40</span>
+      </div>
+      <div class="dim-bar"><div class="dim-fill m" style="--final-width: 40%"></div></div>
+
+      <div class="dim-row">
+        <span class="dim-name">心理放松度</span>
+        <span class="dim-value l">L · 25</span>
+      </div>
+      <div class="dim-bar"><div class="dim-fill l" style="--final-width: 25%"></div></div>
+
+      <div class="dim-row">
+        <span class="dim-name">安全感指数</span>
+        <span class="dim-value l">L · 30</span>
+      </div>
+      <div class="dim-bar"><div class="dim-fill l" style="--final-width: 30%"></div></div>
+    </div>
+
+    <div class="dim-footnote">
+      得分反映「梦境与对应状态的关联程度」，而非该状态的严重程度。<br>
+      例如：压力指数得分较高，表示梦境中的压力场景与现实压力状态关联度高，而非你有严重的压力症。
+    </div>
+  </div>
+
+  <!-- 模块 5 · 解语花 -->
+  <div class="card">
+    <div class="card-title">这朵解语花送你</div>
+    <div class="card-title-deco"></div>
+
+    <div class="flower-icon">
+      <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+        <!-- 四瓣花 -->
+        <path d="M 14 2 Q 19 8 17 14 Q 23 11 25 16 Q 22 22 14 20 Q 6 22 3 16 Q 5 11 11 14 Q 9 8 14 2 Z" fill="#ffd4a3" opacity="0.85"/>
+        <circle cx="14" cy="15" r="2.5" fill="#2d2740"/>
+      </svg>
+    </div>
+
+    <div class="healing-block">
+      躲进小房间，不是软弱，<br>
+      是你对自己的<span class="accent">第一次温柔</span>。
+      <div class="gap"></div>
+      先歇一会儿吧，<br>
+      房间外的事，<br>
+      等你缓过来，<span class="accent">它还在那里</span>。
+    </div>
+  </div>
+
+  <!-- 模块 6 · 友情提示 -->
+  <div class="card disclaimer">
+    <div class="disclaimer-title">友情提示：</div>
+    <div class="disclaimer-text">
+      <p>本解读为心理学视角分析，仅供情绪参考。</p>
+      <p>既非医疗诊断，也不玄学算命，更不预测吉凶。</p>
+      <p>我们只是帮你把梦里的情绪、压力和潜意识小剧场翻译成人话。</p>
+      <p>结果仅供娱乐、放松心情、自我觉察，别太当真，更别影响现实决策。</p>
+      <p>若长期情绪低落，记得找专业人士聊聊～</p>
+    </div>
+  </div>
+
+  <!-- 底部按钮 -->
+  <div class="actions">
+    <button class="btn btn-secondary">分享</button>
+    <button class="btn btn-primary">保存到档案馆</button>
+  </div>
+
+</div>
+
+</body>
+</html>

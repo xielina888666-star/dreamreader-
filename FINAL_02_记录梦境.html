@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>记录梦境</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #1e1a2e;
+    --bg-bubble-ai: #2d2740;
+    --bg-bubble-user: #4a3a5f;
+    --bg-input: #2d2740;
+    --line-soft: #3a334d;
+    --accent: #ffd4a3;
+    --text-main: #f5e6d3;
+    --text-sub: #b8a8c9;
+    --text-mute: #8a7fa0;
+    --text-faint: #6b6080;
+
+    --serif: 'Noto Serif SC', 'Songti SC', serif;
+    --sans: 'Noto Sans SC', 'PingFang SC', -apple-system, sans-serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100vh;
+    background: var(--bg-deep);
+    color: var(--text-main);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  .container {
+    max-width: 420px;
+    margin: 0 auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ============ 顶部导航栏 ============ */
+  .top-bar {
+    flex-shrink: 0;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    border-bottom: 0.5px solid var(--line-soft);
+  }
+
+  .top-back {
+    background: transparent;
+    border: none;
+    color: var(--text-sub);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 8px 12px;
+    line-height: 1;
+  }
+
+  .top-back:active {
+    color: var(--accent);
+  }
+
+  .top-title {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-main);
+    letter-spacing: 3px;
+  }
+
+  .top-action {
+    width: 50px;
+  }
+
+  /* ============ 对话区 ============ */
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    scrollbar-width: none;
+  }
+
+  .chat-area::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 气泡通用 */
+  .bubble {
+    max-width: 78%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 15px;
+    line-height: 1.7;
+    letter-spacing: 0.5px;
+    word-wrap: break-word;
+    animation: bubbleIn 0.35s ease-out;
+  }
+
+  @keyframes bubbleIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* AI 气泡（左） */
+  .bubble.ai {
+    background: var(--bg-bubble-ai);
+    color: var(--text-main);
+    border-bottom-left-radius: 6px;
+    margin-right: auto;
+  }
+
+  /* 用户气泡（右）*/
+  .bubble.user {
+    background: var(--bg-bubble-user);
+    color: var(--text-main);
+    border-bottom-right-radius: 6px;
+    margin-left: auto;
+  }
+
+  /* AI 输入中（三个点动画） */
+  .bubble.thinking {
+    background: var(--bg-bubble-ai);
+    border-bottom-left-radius: 6px;
+    margin-right: auto;
+    padding: 16px 18px;
+    display: flex;
+    gap: 4px;
+  }
+
+  .thinking-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-mute);
+    animation: thinkingPulse 1.4s ease-in-out infinite;
+  }
+
+  .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+  .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes thinkingPulse {
+    0%, 80%, 100% { opacity: 0.3; }
+    40% { opacity: 1; }
+  }
+
+  /* 高亮文字 */
+  .bubble .accent {
+    color: var(--accent);
+  }
+
+  /* ============ 底部输入区 ============ */
+  .input-bar {
+    flex-shrink: 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    border-top: 0.5px solid var(--line-soft);
+  }
+
+  /* 输入条容器（一整条胶囊） */
+  .input-capsule {
+    background: var(--bg-input);
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    padding: 0 4px 0 16px;
+    min-height: 44px;
+    transition: all 0.2s;
+  }
+
+  .input-capsule:focus-within {
+    background: #34304a;
+  }
+
+  /* 文字输入（在文字模式下显示） */
+  .text-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 11px 0;
+    resize: none;
+    max-height: 120px;
+    letter-spacing: 0.5px;
+  }
+
+  .text-input::placeholder {
+    color: var(--text-faint);
+  }
+
+  .text-input:focus {
+    outline: none;
+  }
+
+  /* 按住说话区（在语音模式下显示） */
+  .voice-press-area {
+    flex: 1;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-faint);
+    font-size: 15px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+    margin: 0 -12px 0 -16px;
+    padding: 0 16px;
+    border-radius: 22px;
+  }
+
+  .voice-press-area.recording {
+    background: var(--accent);
+    color: var(--bg-deep);
+    font-weight: 500;
+  }
+
+  .voice-press-area.recording::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #d96f5c;
+    margin-right: 8px;
+    animation: recordPulse 1s ease-in-out infinite;
+  }
+
+  @keyframes recordPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* 右侧切换按钮（喇叭/键盘） */
+  .toggle-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-sub);
+    transition: all 0.2s;
+    margin-left: 6px;
+    padding: 0;
+  }
+
+  .toggle-btn:active {
+    transform: scale(0.92);
+    color: var(--accent);
+  }
+
+  .toggle-btn svg {
+    width: 28px;
+    height: 28px;
+    stroke: currentColor;
+    fill: none;
+  }
+
+  /* 发送按钮（变成图2 那种：蓝色圆形 + 白色上箭头） */
+  .send-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 6px;
+    transition: all 0.2s;
+    color: var(--bg-deep);
+  }
+
+  .send-btn:active {
+    transform: scale(0.92);
+  }
+
+  .send-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* 行动按钮（生成报告等） */
+  .action-bubble {
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .action-btn {
+    background: var(--accent);
+    color: var(--bg-deep);
+    border: none;
+    padding: 10px 22px;
+    border-radius: 22px;
+    font-size: 14px;
+    font-family: var(--sans);
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.2s;
+    align-self: flex-start;
+  }
+
+  .action-btn:active {
+    transform: scale(0.97);
+  }
+
+  .action-btn.secondary {
+    background: transparent;
+    border: 0.5px solid var(--text-sub);
+    color: var(--text-main);
+    font-weight: 400;
+  }
+
+  /* 演示控制（仅原型用） */
+  .demo-controls {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .demo-btn {
+    background: rgba(255, 212, 163, 0.12);
+    border: 0.5px solid var(--accent);
+    color: var(--accent);
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 9px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+  }
+
+  .demo-btn.active {
+    background: var(--accent);
+    color: var(--bg-deep);
+  }
+</style>
+</head>
+<body>
+
+<!-- 演示控制 -->
+<div class="demo-controls">
+  <button class="demo-btn" onclick="setStage(1)">① 初始</button>
+  <button class="demo-btn" onclick="setStage(2)">② 已输入</button>
+  <button class="demo-btn" onclick="setStage(3)">③ 追问</button>
+  <button class="demo-btn" onclick="setStage(4)">④ 完成</button>
+</div>
+
+<div class="container">
+
+  <!-- 顶部 -->
+  <div class="top-bar">
+    <button class="top-back" onclick="window.history.back()">‹</button>
+    <div class="top-title">记录梦境</div>
+    <div class="top-action"></div>
+  </div>
+
+  <!-- 对话区 -->
+  <div class="chat-area" id="chatArea">
+    <!-- 内容由 JS 动态填充 -->
+  </div>
+
+  <!-- 底部输入区 -->
+  <div class="input-bar">
+    <div class="input-capsule" id="inputCapsule">
+
+      <!-- 文字输入（默认显示） -->
+      <textarea
+        class="text-input"
+        id="textInput"
+        placeholder="发消息或按住说话…"
+        rows="1"
+        oninput="onTextInput()"
+      ></textarea>
+
+      <!-- 按住说话区（语音模式下显示） -->
+      <div class="voice-press-area" id="voicePressArea" style="display: none;"
+           onmousedown="startRecording()" onmouseup="stopRecording()"
+           ontouchstart="startRecording()" ontouchend="stopRecording()">
+        按住说话…
+      </div>
+
+      <!-- 发送按钮（文字模式 + 有内容时显示，蓝色圆形 + 上箭头） -->
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()" style="display: none;">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <!-- 右侧切换按钮（喇叭/键盘） -->
+      <button class="toggle-btn" id="toggleBtn" onclick="toggleMode()">
+        <!-- 文字模式下显示「圆圈 + 纯音波」图标 -->
+        <svg id="micIcon" viewBox="0 0 32 32" fill="none">
+          <!-- 外圆 -->
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+          <!-- 第一道音波（最小） -->
+          <path d="M12 13 Q14 16 12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <!-- 第二道音波（中） -->
+          <path d="M16 11 Q19 16 16 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <!-- 第三道音波（最大） -->
+          <path d="M20 9 Q24 16 20 23" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+        <!-- 语音模式下显示「圆形键盘」图标 -->
+        <svg id="keyboardIcon" viewBox="0 0 32 32" fill="none" style="display: none;">
+          <!-- 外圆 -->
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+          <!-- 键盘按钮：上排 3 个 -->
+          <circle cx="11" cy="13" r="1.4" fill="currentColor"/>
+          <circle cx="16" cy="13" r="1.4" fill="currentColor"/>
+          <circle cx="21" cy="13" r="1.4" fill="currentColor"/>
+          <!-- 键盘按钮：中排 3 个 -->
+          <circle cx="11" cy="17" r="1.4" fill="currentColor"/>
+          <circle cx="16" cy="17" r="1.4" fill="currentColor"/>
+          <circle cx="21" cy="17" r="1.4" fill="currentColor"/>
+          <!-- 键盘空格键 -->
+          <rect x="10" y="20.4" width="12" height="2.2" rx="1.1" fill="currentColor"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // 当前模式: 'text' (默认) | 'voice'
+  let currentMode = 'text';
+  let isRecording = false;
+  let stage = 1;
+
+  const chatArea = document.getElementById('chatArea');
+
+  // ============ 模式切换（点击右侧喇叭/键盘按钮触发）============
+  function toggleMode() {
+    currentMode = currentMode === 'text' ? 'voice' : 'text';
+    updateModeUI();
+  }
+
+  function updateModeUI() {
+    const textInput = document.getElementById('textInput');
+    const voicePressArea = document.getElementById('voicePressArea');
+    const sendBtn = document.getElementById('sendBtn');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const micIcon = document.getElementById('micIcon');
+    const keyboardIcon = document.getElementById('keyboardIcon');
+
+    if (currentMode === 'voice') {
+      // 语音模式：隐藏文字输入，显示按住说话区
+      textInput.style.display = 'none';
+      voicePressArea.style.display = 'flex';
+      // 语音模式下永远是键盘图标（不会有发送按钮）
+      sendBtn.style.display = 'none';
+      toggleBtn.style.display = 'flex';
+      micIcon.style.display = 'none';
+      keyboardIcon.style.display = 'block';
+    } else {
+      // 文字模式：显示输入框，隐藏按住说话
+      textInput.style.display = 'block';
+      voicePressArea.style.display = 'none';
+      micIcon.style.display = 'block';
+      keyboardIcon.style.display = 'none';
+
+      // 根据是否有内容决定是显示发送按钮还是喇叭按钮（互斥）
+      const hasText = textInput.value.trim().length > 0;
+      if (hasText) {
+        sendBtn.style.display = 'flex';
+        toggleBtn.style.display = 'none';
+        textInput.placeholder = '发消息…';
+      } else {
+        sendBtn.style.display = 'none';
+        toggleBtn.style.display = 'flex';
+        textInput.placeholder = '发消息或按住说话…';
+      }
+
+      setTimeout(() => textInput.focus(), 50);
+    }
+  }
+
+  // ============ 文字输入 ============
+  function onTextInput() {
+    const input = document.getElementById('textInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const toggleBtn = document.getElementById('toggleBtn');
+
+    // 自动调整高度
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+
+    // 有内容：显示发送按钮、隐藏喇叭按钮
+    // 没内容：隐藏发送按钮、显示喇叭按钮
+    if (input.value.trim().length > 0) {
+      sendBtn.style.display = 'flex';
+      toggleBtn.style.display = 'none';
+      input.placeholder = '发消息…';
+    } else {
+      sendBtn.style.display = 'none';
+      toggleBtn.style.display = 'flex';
+      input.placeholder = '发消息或按住说话…';
+    }
+  }
+
+  // ============ 语音录制（模拟） ============
+  function startRecording() {
+    isRecording = true;
+    const area = document.getElementById('voicePressArea');
+    area.classList.add('recording');
+    area.textContent = '松开发送';
+  }
+
+  function stopRecording() {
+    if (!isRecording) return;
+    isRecording = false;
+    const area = document.getElementById('voicePressArea');
+    area.classList.remove('recording');
+    area.textContent = '按住说话…';
+
+    // 模拟语音转文字 + 发送
+    sendUserMessage('我梦到一条黑蛇追着我，跑得很慢，最后躲进一个小房间，关上了门。醒来心跳很快。');
+
+    // AI 追问
+    setTimeout(() => {
+      addBubble('thinking');
+      setTimeout(() => {
+        removeThinking();
+        if (stage === 1) {
+          addBubble('ai', '那你在梦里有什么<span class="accent">情绪感受</span>？醒来之后呢？');
+          stage = 3;
+        }
+      }, 1500);
+    }, 600);
+  }
+
+  // ============ 发送消息 ============
+  function sendMessage() {
+    const input = document.getElementById('textInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    sendUserMessage(text);
+    input.value = '';
+    input.style.height = 'auto';
+
+    // 发送后恢复初始状态：隐藏发送按钮，显示喇叭按钮
+    document.getElementById('sendBtn').style.display = 'none';
+    document.getElementById('toggleBtn').style.display = 'flex';
+    input.placeholder = '发消息或按住说话…';
+
+    handleAIResponse();
+  }
+
+  function sendUserMessage(text) {
+    addBubble('user', text);
+  }
+
+  function handleAIResponse() {
+    setTimeout(() => {
+      addBubble('thinking');
+      setTimeout(() => {
+        removeThinking();
+
+        if (stage === 1) {
+          addBubble('ai', '那你在梦里有什么<span class="accent">情绪感受</span>？醒来之后呢？');
+          stage = 3;
+        } else if (stage === 3) {
+          addBubble('ai', '好的，我大致了解了。需要为你生成<span class="accent">梦境分析报告</span>吗？');
+          setTimeout(() => addActionButtons(), 100);
+          stage = 4;
+        }
+      }, 1500);
+    }, 400);
+  }
+
+  // ============ 气泡管理 ============
+  function addBubble(type, html) {
+    const div = document.createElement('div');
+    if (type === 'thinking') {
+      div.className = 'bubble thinking';
+      div.id = 'thinkingBubble';
+      div.innerHTML = '<span class="thinking-dot"></span><span class="thinking-dot"></span><span class="thinking-dot"></span>';
+    } else {
+      div.className = 'bubble ' + type;
+      div.innerHTML = html;
+    }
+    chatArea.appendChild(div);
+    scrollToBottom();
+  }
+
+  function removeThinking() {
+    const t = document.getElementById('thinkingBubble');
+    if (t) t.remove();
+  }
+
+  function addActionButtons() {
+    const div = document.createElement('div');
+    div.className = 'action-bubble';
+    div.id = 'actionBubble';
+    div.innerHTML = `
+      <button class="action-btn" onclick="goToReport()">生成分析报告</button>
+      <button class="action-btn secondary" onclick="continueChat()">再补充一些</button>
+    `;
+    chatArea.appendChild(div);
+    scrollToBottom();
+  }
+
+  function goToReport() {
+    window.location.href = 'FINAL_03_梦境分析报告.html';
+  }
+
+  function continueChat() {
+    document.getElementById('actionBubble')?.remove();
+    addBubble('ai', '好，继续告诉我吧。');
+  }
+
+  function scrollToBottom() {
+    setTimeout(() => {
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }, 50);
+  }
+
+  // ============ 演示阶段切换 ============
+  function setStage(s) {
+    stage = s;
+    chatArea.innerHTML = '';
+    document.getElementById('actionBubble')?.remove();
+
+    if (s === 1) {
+      addBubble('ai', '把刚才的梦说给我听，<span class="accent">想到哪说到哪</span>。');
+    } else if (s === 2) {
+      addBubble('ai', '把刚才的梦说给我听，<span class="accent">想到哪说到哪</span>。');
+      addBubble('user', '我梦到一条黑蛇追着我，跑得很慢，最后躲进一个小房间，关上了门。醒来心跳很快。');
+    } else if (s === 3) {
+      addBubble('ai', '把刚才的梦说给我听，<span class="accent">想到哪说到哪</span>。');
+      addBubble('user', '我梦到一条黑蛇追着我，跑得很慢，最后躲进一个小房间，关上了门。醒来心跳很快。');
+      addBubble('ai', '那你在梦里有什么<span class="accent">情绪感受</span>？醒来之后呢？');
+    } else if (s === 4) {
+      addBubble('ai', '把刚才的梦说给我听，<span class="accent">想到哪说到哪</span>。');
+      addBubble('user', '我梦到一条黑蛇追着我，跑得很慢，最后躲进一个小房间，关上了门。醒来心跳很快。');
+      addBubble('ai', '那你在梦里有什么<span class="accent">情绪感受</span>？醒来之后呢？');
+      addBubble('user', '梦里有点害怕，醒来心跳还很快。');
+      addBubble('ai', '好的，我大致了解了。需要为你生成<span class="accent">梦境分析报告</span>吗？');
+      setTimeout(() => addActionButtons(), 100);
+    }
+
+    document.querySelectorAll('.demo-btn').forEach((btn, idx) => {
+      btn.classList.toggle('active', idx + 1 === s);
+    });
+  }
+
+  // 初始化
+  setStage(1);
+  updateModeUI();
+</script>
+
+</body>
+</html>

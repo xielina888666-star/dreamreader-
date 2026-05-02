@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>梦境 · 首页</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #1e1a2e;
+    --bg-card: #2d2740;
+    --bg-card-2: #34304a;
+    --bg-inner: #24203a;
+    --line: #4a4060;
+    --line-soft: #3a334d;
+    --accent: #ffd4a3;
+    --accent-soft: #e8b88a;
+    --text-main: #f5e6d3;
+    --text-sub: #b8a8c9;
+    --text-mute: #8a7fa0;
+    --text-faint: #6b6080;
+
+    /* 8 种味道（梦境氛围色） */
+    --flavor-sweet: #ffb88a;      /* 🍯 甜 - 蜜桃橙 - 开心治愈 */
+    --flavor-sour: #d49db0;       /* 🍋 酸 - 玫粉 - 念旧暧昧 */
+    --flavor-bitter: #7a7088;     /* ☕ 苦 - 雾灰 - 摆烂麻木 */
+    --flavor-spicy: #d96f5c;      /* 🌶 辣 - 深红橙 - 情绪动荡焦虑 */
+    --flavor-salty: #7b9db0;      /* 🧂 咸 - 雾蓝 - 内耗压力纠结 */
+    --flavor-plain: #95b3a8;      /* 🍃 淡 - 雾蓝绿 - 清醒平静 */
+    --flavor-astringent: #8a7a5c; /* 🎭 涩 - 哑金黑 - 伪装逃避 */
+    --flavor-strange: #a890c4;    /* 🌌 怪 - 星紫 - 奇幻荒诞 */
+
+    --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+    --sans: 'Noto Sans SC', 'PingFang SC', -apple-system, sans-serif;
+    --display: 'Cormorant Garamond', 'Times New Roman', serif;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    background: var(--bg-deep);
+    color: var(--text-main);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100vh;
+    padding-bottom: 100px; /* 给底部 Tab 留空间 */
+  }
+
+  /* 背景星点 */
+  .stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0.25;
+  }
+
+  .star:nth-child(1) { top: 5%; left: 10%; }
+  .star:nth-child(2) { top: 8%; right: 15%; animation: twinkle 3s ease-in-out infinite; }
+  .star:nth-child(3) { top: 22%; left: 8%; animation: twinkle 4s ease-in-out infinite 1s; }
+  .star:nth-child(4) { top: 50%; right: 10%; opacity: 0.2; }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.12; }
+    50% { opacity: 0.4; }
+  }
+
+  .container {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 56px 16px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ============ 顶部问候区 ============ */
+  .greeting {
+    margin-bottom: 24px;
+    padding: 0 4px;
+  }
+
+  .greeting-time {
+    font-family: var(--display);
+    font-size: 12px;
+    color: var(--text-mute);
+    letter-spacing: 3px;
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+
+  .greeting-text {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--text-main);
+    font-weight: 500;
+    letter-spacing: 2px;
+    line-height: 1.4;
+  }
+
+  .greeting-text .accent {
+    color: var(--accent);
+  }
+
+  /* ============ 档案馆入口卡片 ============ */
+  .archive-card {
+    background: linear-gradient(135deg, #2d2740 0%, #3a3252 100%);
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .archive-card:active {
+    transform: scale(0.98);
+  }
+
+  .archive-card::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 212, 163, 0.08) 0%, transparent 70%);
+  }
+
+  .archive-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .archive-title {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--text-main);
+    font-weight: 500;
+    letter-spacing: 2px;
+  }
+
+  .archive-title-en {
+    font-family: var(--display);
+    font-size: 11px;
+    color: var(--text-mute);
+    letter-spacing: 2px;
+    font-style: italic;
+  }
+
+  .archive-arrow {
+    color: var(--text-mute);
+    font-size: 14px;
+  }
+
+  .archive-body {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .archive-stats {
+    display: flex;
+    gap: 20px;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-num {
+    font-family: var(--display);
+    font-size: 28px;
+    color: var(--accent);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-mute);
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  .archive-trend {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+  }
+
+  .archive-trend-label {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    line-height: 1;
+  }
+
+  .trend-label-text {
+    font-family: var(--serif);
+    font-size: 11px;
+    color: var(--text-sub);
+    letter-spacing: 1px;
+    font-weight: 500;
+  }
+
+  .trend-label-period {
+    font-family: var(--display);
+    font-size: 9px;
+    color: var(--text-mute);
+    letter-spacing: 1px;
+    font-style: italic;
+  }
+
+  .archive-trend svg {
+    width: 100%;
+    height: 28px;
+    overflow: visible;
+  }
+
+  .archive-foot {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 0.5px solid var(--line-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .archive-foot-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .archive-foot-label {
+    font-size: 11px;
+    color: var(--text-sub);
+    letter-spacing: 1px;
+  }
+
+  .archive-foot-value {
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--text-main);
+    font-style: italic;
+  }
+
+  .archive-foot-value .accent {
+    color: var(--accent);
+    font-weight: 500;
+    font-style: normal;
+  }
+
+  /* 味道图例 */
+  .mood-legend {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 0.5px solid var(--line-soft);
+  }
+
+  .mood-legend-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .mood-legend-title {
+    font-size: 11px;
+    color: var(--text-mute);
+    letter-spacing: 1.5px;
+  }
+
+  .mood-legend-arrow {
+    font-size: 11px;
+    color: var(--text-mute);
+    transition: transform 0.3s ease;
+    line-height: 1;
+  }
+
+  .mood-legend.expanded .mood-legend-arrow {
+    transform: rotate(180deg);
+  }
+
+  .mood-legend-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease;
+    opacity: 0;
+    margin-top: 0;
+  }
+
+  .mood-legend.expanded .mood-legend-content {
+    max-height: 400px;
+    opacity: 1;
+    margin-top: 14px;
+  }
+
+  .mood-legend-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 16px;
+  }
+
+  .mood-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mood-legend-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  .mood-legend-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .mood-legend-name {
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--text-main);
+    letter-spacing: 1px;
+    font-weight: 500;
+  }
+
+  .mood-legend-desc {
+    font-size: 10px;
+    color: var(--text-mute);
+    letter-spacing: 0.5px;
+  }
+
+  /* ============ 列表标题 ============ */
+  .section-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 0 4px;
+  }
+
+  .section-title-zh {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--text-main);
+    font-weight: 500;
+    letter-spacing: 3px;
+  }
+
+  .section-title-count {
+    font-family: var(--display);
+    font-size: 12px;
+    color: var(--text-mute);
+    letter-spacing: 1px;
+    font-style: italic;
+  }
+
+  /* ============ 时间分组 ============ */
+  .time-group {
+    margin-bottom: 22px;
+  }
+
+  .time-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 0 4px;
+  }
+
+  .time-label-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.8;
+  }
+
+  .time-label-text {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--text-sub);
+    font-weight: 500;
+    letter-spacing: 2px;
+  }
+
+  .time-label-line {
+    flex: 1;
+    height: 1px;
+    background: var(--line-soft);
+  }
+
+  /* ============ 梦境列表项 ============ */
+  .dream-item {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .dream-item:active {
+    transform: scale(0.99);
+    background: var(--bg-card-2);
+  }
+
+  .dream-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .dream-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-icon {
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .status-icon.analyzed {
+    color: var(--accent);
+  }
+
+  .status-icon.unanalyzed {
+    color: var(--text-mute);
+  }
+
+  .status-text {
+    font-size: 11px;
+    color: var(--text-mute);
+    letter-spacing: 1px;
+  }
+
+  .status-text.analyzed {
+    color: var(--accent);
+  }
+
+  .mood-block {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    line-height: 1;
+  }
+
+  .dream-title {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--text-main);
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .dream-preview {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--text-sub);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .dream-tags {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 0.5px solid var(--line-soft);
+  }
+
+  .tag-pair {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .tag-key {
+    font-size: 10px;
+    color: var(--text-mute);
+    letter-spacing: 1px;
+  }
+
+  .tag-value {
+    font-family: var(--serif);
+    font-size: 12px;
+    color: var(--text-main);
+    font-style: italic;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-divider {
+    width: 1px;
+    height: 10px;
+    background: var(--line-soft);
+  }
+
+  /* 未分析的梦境 */
+  .dream-item.unanalyzed-card .dream-tags {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 4px;
+  }
+
+  .unanalyzed-cta {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--text-mute);
+    letter-spacing: 1px;
+  }
+
+  .unanalyzed-cta .accent {
+    color: var(--accent);
+  }
+
+  /* ============ 空状态 ============ */
+  .empty-state {
+    text-align: center;
+    padding: 60px 24px 100px;
+    display: none;
+  }
+
+  .empty-state.show {
+    display: block;
+  }
+
+  .empty-illustration {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 28px;
+    opacity: 0.6;
+  }
+
+  .empty-poetry {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--text-sub);
+    line-height: 2;
+    letter-spacing: 1px;
+    font-style: italic;
+    max-width: 280px;
+    margin: 0 auto 32px;
+  }
+
+  .empty-cta {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+
+  .empty-cta::before {
+    content: '✦';
+    margin-right: 8px;
+    opacity: 0.7;
+  }
+
+  .empty-cta::after {
+    content: '✦';
+    margin-left: 8px;
+    opacity: 0.7;
+  }
+
+  /* ============ 列表底部提示 ============ */
+  .list-end {
+    text-align: center;
+    padding: 24px 0 8px;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 2px;
+  }
+
+  /* ============ 底部 Tab ============ */
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(30, 26, 46, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 0.5px solid var(--line-soft);
+    z-index: 100;
+    padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .tab-bar-inner {
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: relative;
+  }
+
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    background: transparent;
+    border: none;
+  }
+
+  .tab-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--text-mute);
+    transition: color 0.2s;
+  }
+
+  .tab-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+  }
+
+  .tab-label {
+    font-size: 10px;
+    color: var(--text-mute);
+    letter-spacing: 2px;
+    transition: color 0.2s;
+  }
+
+  .tab-item.active .tab-icon,
+  .tab-item.active .tab-label {
+    color: var(--accent);
+  }
+
+  .tab-item.active .tab-icon svg path,
+  .tab-item.active .tab-icon svg circle {
+    stroke-width: 2;
+  }
+
+  /* 中央 + 按钮 */
+  .tab-add {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 300;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(255, 212, 163, 0.25), 0 0 0 4px rgba(255, 212, 163, 0.08);
+    margin: -22px 12px 0;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .tab-add:active {
+    transform: scale(0.95);
+  }
+
+  .tab-add::before {
+    content: '+';
+    line-height: 1;
+    margin-top: -3px;
+  }
+
+  /* ============ 入场动画 ============ */
+  .greeting,
+  .archive-card,
+  .section-title,
+  .time-group {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fadeUp 0.5s ease-out forwards;
+  }
+
+  .greeting { animation-delay: 0.05s; }
+  .archive-card { animation-delay: 0.15s; }
+  .section-title { animation-delay: 0.25s; }
+  .time-group:nth-of-type(1) { animation-delay: 0.3s; }
+  .time-group:nth-of-type(2) { animation-delay: 0.4s; }
+  .time-group:nth-of-type(3) { animation-delay: 0.5s; }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ============ 演示用：切换空/有内容状态 ============ */
+  .demo-toggle {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 200;
+    background: rgba(255, 212, 163, 0.15);
+    border: 0.5px solid var(--accent);
+    color: var(--accent);
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-size: 11px;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<!-- 演示切换按钮（实际产品中没有） -->
+<button class="demo-toggle" onclick="toggleEmpty()">切换空/有内容</button>
+
+<!-- 背景星点 -->
+<div class="stars">
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+</div>
+
+<div class="container" id="container-with-content">
+
+  <!-- 顶部问候区 -->
+  <div class="greeting">
+    <div class="greeting-time" id="greeting-date">2026 · 04 · 23 · WED</div>
+    <div class="greeting-text" id="greeting-text">
+      昨晚<span class="accent">做了梦吗</span>？<br>
+      记下来，我帮你看看。
+    </div>
+  </div>
+
+  <!-- 档案馆入口卡片 -->
+  <div class="archive-card" onclick="alert('档案馆 - 点击进入数据可视化页面（待开发）')">
+    <div class="archive-header">
+      <div>
+        <div class="archive-title">梦境档案馆</div>
+        <div class="archive-title-en">YOUR DREAM ARCHIVE</div>
+      </div>
+      <div class="archive-arrow">›</div>
+    </div>
+
+    <div class="archive-body">
+      <div class="archive-stats">
+        <div class="stat-item">
+          <span class="stat-num">12</span>
+          <span class="stat-label">本月记录</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">8</span>
+          <span class="stat-label">已分析</span>
+        </div>
+      </div>
+
+      <div class="archive-trend">
+        <div class="archive-trend-label">
+          <span class="trend-label-text">情绪走势</span>
+          <span class="trend-label-period">近 30 天</span>
+        </div>
+        <svg viewBox="0 0 120 28" preserveAspectRatio="none">
+          <path d="M 0 18 Q 12 11, 24 14 T 48 10 T 72 18 T 96 8 T 120 14"
+                fill="none" stroke="#ffd4a3" stroke-width="1.2" opacity="0.85"/>
+          <path d="M 0 18 Q 12 11, 24 14 T 48 10 T 72 18 T 96 8 T 120 14 L 120 28 L 0 28 Z"
+                fill="url(#gradient)" opacity="0.18"/>
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#ffd4a3"/>
+              <stop offset="100%" stop-color="#ffd4a3" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+    <div class="archive-foot">
+      <div class="archive-foot-row">
+        <span class="archive-foot-label">本月主导状态</span>
+        <span class="archive-foot-value"><span class="accent">班味太重</span> · 占 35%</span>
+      </div>
+      <div class="archive-foot-row">
+        <span class="archive-foot-label">本月主导人格</span>
+        <span class="archive-foot-value"><span class="accent">紧绷打工人</span> · 占 42%</span>
+      </div>
+    </div>
+
+    <!-- 味道图例（默认折叠） -->
+    <div class="mood-legend" id="moodLegend">
+      <div class="mood-legend-header" onclick="toggleLegend()">
+        <span class="mood-legend-title">梦境的味道</span>
+        <span class="mood-legend-arrow">⌄</span>
+      </div>
+      <div class="mood-legend-content">
+        <div class="mood-legend-grid">
+          <div class="mood-legend-item">
+            <span class="mood-legend-dot" style="background: var(--flavor-sweet);">🍯</span>
+            <div class="mood-legend-info">
+              <span class="mood-legend-name">甜</span>
+              <span class="mood-legend-desc">治愈温暖</span>
+            </div>
+          </div>
+          <div class="mood-legend-item">
+            <span class="mood-legend-dot" style="background: var(--flavor-sour);">🍋</span>
+            <div class="mood-legend-info">
+              <span class="mood-legend-name">酸</span>
+              <span class="mood-legend-desc">念旧心动</span>
+            </div>
+          </div>
+          <div class="mood-legend-item">
+            <span class="mood-legend-dot" style="background: var(--flavor-bitter);">☕</span>
+            <div class="mood-legend-info">
+              <span class="mood-legend-name">苦</span>
+              <span class="mood-legend-desc">沉重低落</span>
+            </div>
+          </div>
+          <div class="mood-legend-item">
+            <span class="mood-legend-dot" style="background: var(--flavor-spicy);">🌶</span>
+            <div class="mood-legend-info">
+              <span class="mood-legend-name">辣</span>
+              <span class="mood-legend-desc">激烈起伏</span>
+            </div>
+          </div>
+          <div class="mood-legend-item">
+            <span class="mood-legend-dot" style="background: var(--flavor-salty);">🧂</span>
+            <div class="mood-legend-info">
+              <span class="mood-legend-name">咸</span>
+              <span class="mood-legend-desc">复杂纠结</span>
+            </div>
+          </div>
+          <div class="mood-legend-item">
+            <span class="mood-legend-dot" style="background: var(--flavor-plain);">🍃</span>
+            <div class="mood-legend-info">
+              <span class="mood-legend-name">淡</span>
+              <span class="mood-legend-desc">平和释然</span>
+            </div>
+          </div>
+          <div class="mood-legend-item">
+            <span class="mood-legend-dot" style="background: var(--flavor-astringent);">🎭</span>
+            <div class="mood-legend-info">
+              <span class="mood-legend-name">涩</span>
+              <span class="mood-legend-desc">压抑藏匿</span>
+            </div>
+          </div>
+          <div class="mood-legend-item">
+            <span class="mood-legend-dot" style="background: var(--flavor-strange);">🌌</span>
+            <div class="mood-legend-info">
+              <span class="mood-legend-name">怪</span>
+              <span class="mood-legend-desc">离奇荒诞</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 列表标题 -->
+  <div class="section-title">
+    <span class="section-title-zh">我的梦境</span>
+    <span class="section-title-count">12 dreams</span>
+  </div>
+
+  <!-- 时间分组 1：今天 -->
+  <div class="time-group">
+    <div class="time-label">
+      <span class="time-label-dot"></span>
+      <span class="time-label-text">今天</span>
+      <span class="time-label-line"></span>
+    </div>
+
+    <!-- 已分析的梦境 -->
+    <div class="dream-item" onclick="window.location.href='FINAL_03_梦境分析报告.html'">
+      <div class="dream-header">
+        <div class="dream-status">
+          <span class="status-icon analyzed">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 7L5.5 10.5L12 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="status-text analyzed">已分析</span>
+        </div>
+        <div class="mood-block" style="background: var(--flavor-spicy);" title="辣 · 情绪动荡焦虑">🌶</div>
+      </div>
+
+      <div class="dream-title">被一条黑蛇追赶</div>
+      <div class="dream-preview">梦到被一条黑蛇追赶，跑得很慢，最后躲进了一个很小的房间，把门关上了，醒来心跳很快。</div>
+
+      <div class="dream-tags">
+        <div class="tag-pair">
+          <span class="tag-key">状态</span>
+          <span class="tag-value">绷不住了</span>
+        </div>
+        <div class="tag-divider"></div>
+        <div class="tag-pair">
+          <span class="tag-key">人格</span>
+          <span class="tag-value">鸵鸟先生</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 时间分组 2：昨天 -->
+  <div class="time-group">
+    <div class="time-label">
+      <span class="time-label-dot"></span>
+      <span class="time-label-text">昨天</span>
+      <span class="time-label-line"></span>
+    </div>
+
+    <!-- 未分析的梦境 -->
+    <div class="dream-item unanalyzed-card" onclick="alert('点击查看梦境内容 / 生成分析（待开发）')">
+      <div class="dream-header">
+        <div class="dream-status">
+          <span class="status-icon unanalyzed">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </span>
+          <span class="status-text">未分析</span>
+        </div>
+        <div class="mood-block" style="background: var(--flavor-salty);" title="咸 · 内耗纠结">🧂</div>
+      </div>
+
+      <div class="dream-title">在地铁里找不到出口</div>
+      <div class="dream-preview">梦里坐了一趟很久的地铁，下车之后怎么都找不到出口，每个标识都看不清楚...</div>
+
+      <div class="dream-tags">
+        <span class="unanalyzed-cta"><span class="accent">点击</span> 生成分析报告 ›</span>
+      </div>
+    </div>
+
+    <div class="dream-item" onclick="alert('查看历史报告（待开发）')">
+      <div class="dream-header">
+        <div class="dream-status">
+          <span class="status-icon analyzed">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 7L5.5 10.5L12 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="status-text analyzed">已分析</span>
+        </div>
+        <div class="mood-block" style="background: var(--flavor-sweet);" title="甜 · 开心治愈">🍯</div>
+      </div>
+
+      <div class="dream-title">和老朋友在海边</div>
+      <div class="dream-preview">梦到和很久没见的朋友在海边散步，海水很温暖，我们没说话，但很安心。</div>
+
+      <div class="dream-tags">
+        <div class="tag-pair">
+          <span class="tag-key">状态</span>
+          <span class="tag-value">心头甜</span>
+        </div>
+        <div class="tag-divider"></div>
+        <div class="tag-pair">
+          <span class="tag-key">人格</span>
+          <span class="tag-value">松弛 i 人</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 时间分组 3：4 月 17 日 -->
+  <div class="time-group">
+    <div class="time-label">
+      <span class="time-label-dot"></span>
+      <span class="time-label-text">4 月 17 日</span>
+      <span class="time-label-line"></span>
+    </div>
+
+    <div class="dream-item" onclick="alert('查看历史报告（待开发）')">
+      <div class="dream-header">
+        <div class="dream-status">
+          <span class="status-icon analyzed">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 7L5.5 10.5L12 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="status-text analyzed">已分析</span>
+        </div>
+        <div class="mood-block" style="background: var(--flavor-sour);" title="酸 · 念旧暧昧">🍋</div>
+      </div>
+
+      <div class="dream-title">那个人又出现了</div>
+      <div class="dream-preview">梦到 ta 还像以前一样笑着，我们什么都没说，醒来枕头是湿的。</div>
+
+      <div class="dream-tags">
+        <div class="tag-pair">
+          <span class="tag-key">状态</span>
+          <span class="tag-value">前任 PTSD</span>
+        </div>
+        <div class="tag-divider"></div>
+        <div class="tag-pair">
+          <span class="tag-key">人格</span>
+          <span class="tag-value">深情种</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="list-end">— 没有更多梦境了 —</div>
+
+</div>
+
+<!-- 空状态（首次用户看到的） -->
+<div class="container empty-container" id="container-empty" style="display: none;">
+  <div class="empty-state show">
+    <div class="empty-illustration">
+      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- 简单的弯月 -->
+        <path d="M 28 12 Q 60 14 60 40 Q 60 66 28 68 Q 50 56 50 40 Q 50 24 28 12 Z"
+              fill="#ffd4a3" opacity="0.85"/>
+        <!-- 几颗小星星 -->
+        <circle cx="20" cy="20" r="1.5" fill="#ffd4a3" opacity="0.7"/>
+        <circle cx="14" cy="50" r="1.2" fill="#ffd4a3" opacity="0.5"/>
+        <circle cx="68" cy="58" r="1.5" fill="#ffd4a3" opacity="0.7"/>
+        <circle cx="72" cy="20" r="1.2" fill="#ffd4a3" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <div class="empty-poetry">
+      梦是一段没有亲身参与，<br>
+      却又无比真实的故事。<br>
+      它藏着你白天没说出口的，<br>
+      情绪、压力、和心事。
+    </div>
+
+    <div class="empty-cta">来记下你的第一个梦</div>
+  </div>
+</div>
+
+<!-- 底部 Tab -->
+<div class="tab-bar">
+  <div class="tab-bar-inner">
+    <button class="tab-item active">
+      <span class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <!-- 月亮 + 星星图标 -->
+          <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="tab-label">梦境</span>
+    </button>
+
+    <button class="tab-add" onclick="window.location.href='FINAL_02_记录梦境.html'" title="记录梦境"></button>
+
+    <button class="tab-item" onclick="window.location.href='FINAL_04_我的.html'">
+      <span class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <!-- 用户图标 -->
+          <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="tab-label">我的</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  // 根据时间动态显示问候语
+  function updateGreeting() {
+    const now = new Date();
+    const hour = now.getHours();
+    const greetingEl = document.getElementById('greeting-text');
+    const dateEl = document.getElementById('greeting-date');
+
+    let text;
+    if (hour >= 5 && hour < 12) {
+      text = '昨晚<span class="accent">做了梦吗</span>？<br>记下来，我帮你看看。';
+    } else if (hour >= 12 && hour < 18) {
+      text = '中午好。<br>有想起<span class="accent">什么梦</span>吗？';
+    } else if (hour >= 18 && hour < 24) {
+      text = '今天辛苦了。<br>睡前想<span class="accent">记点什么</span>吗？';
+    } else {
+      text = '夜深了。<br>今晚的梦，<span class="accent">明天见</span>。';
+    }
+    greetingEl.innerHTML = text;
+
+    // 动态更新日期
+    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const w = days[now.getDay()];
+    dateEl.textContent = `${y} · ${m} · ${d} · ${w}`;
+  }
+
+  updateGreeting();
+
+  // 切换空/有内容状态（仅演示用）
+  function toggleEmpty() {
+    const withContent = document.getElementById('container-with-content');
+    const empty = document.getElementById('container-empty');
+    if (empty.style.display === 'none') {
+      withContent.style.display = 'none';
+      empty.style.display = 'block';
+    } else {
+      withContent.style.display = 'block';
+      empty.style.display = 'none';
+    }
+  }
+
+  // 味道图例的折叠展开
+  function toggleLegend() {
+    const legend = document.getElementById('moodLegend');
+    legend.classList.toggle('expanded');
+  }
+</script>
+
+</body>
+</html>

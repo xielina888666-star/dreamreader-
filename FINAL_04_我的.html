@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>我的 · 梦境</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #1e1a2e;
+    --bg-card: #2d2740;
+    --bg-card-2: #34304a;
+    --bg-inner: #24203a;
+    --line: #4a4060;
+    --line-soft: #3a334d;
+    --accent: #ffd4a3;
+    --accent-soft: #e8b88a;
+    --text-main: #f5e6d3;
+    --text-sub: #b8a8c9;
+    --text-mute: #8a7fa0;
+    --text-faint: #6b6080;
+
+    --serif: 'Noto Serif SC', 'Songti SC', serif;
+    --sans: 'Noto Sans SC', 'PingFang SC', -apple-system, sans-serif;
+    --display: 'Cormorant Garamond', serif;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    background: var(--bg-deep);
+    color: var(--text-main);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100vh;
+    padding-bottom: 100px;
+  }
+
+  /* 背景星点 */
+  .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .star { position: absolute; width: 2px; height: 2px; background: var(--accent); border-radius: 50%; opacity: 0.25; }
+  .star:nth-child(1) { top: 10%; left: 12%; }
+  .star:nth-child(2) { top: 18%; right: 16%; animation: twinkle 3s ease-in-out infinite; }
+  .star:nth-child(3) { top: 38%; left: 8%; opacity: 0.18; }
+  .star:nth-child(4) { top: 65%; right: 12%; animation: twinkle 4s ease-in-out infinite 1s; }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.12; }
+    50% { opacity: 0.4; }
+  }
+
+  .container {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 36px 14px 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ============ 顶部用户信息 ============ */
+  .user-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding: 0 4px;
+  }
+
+  .avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4a3a5f 0%, #6b5a82 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-family: var(--serif);
+    color: var(--accent);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1.5px solid var(--line-soft);
+    overflow: hidden;
+  }
+
+  .avatar:active {
+    transform: scale(0.96);
+  }
+
+  /* 用户信息 */
+  .user-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .user-name {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-main);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .user-edit-icon {
+    font-size: 13px;
+    color: var(--text-mute);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .user-edit-icon:hover {
+    color: var(--accent);
+  }
+
+  .user-bio {
+    font-size: 13px;
+    color: var(--text-sub);
+    font-style: italic;
+    font-family: var(--serif);
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+  }
+
+  /* 等级图标行 */
+  .user-level {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    user-select: none;
+  }
+
+  .user-level:active {
+    opacity: 0.7;
+  }
+
+  .lvl-svg {
+    width: 22px;
+    height: 22px;
+    display: inline-block;
+    vertical-align: middle;
+    filter: drop-shadow(0 1px 4px rgba(255, 212, 240, 0.25));
+  }
+
+  .level-empty {
+    font-size: 11px;
+    color: var(--text-mute);
+    letter-spacing: 1px;
+    font-family: var(--serif);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .level-empty .lvl-svg {
+    width: 14px;
+    height: 14px;
+    opacity: 0.6;
+  }
+
+  /* ============ 梦境能量 + 会员卡 ============ */
+  .top-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .energy-card {
+    background: linear-gradient(135deg, #3a3252 0%, #2d2740 100%);
+    border-radius: 14px;
+    padding: 14px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 0.5px solid var(--line-soft);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .energy-card::before {
+    content: '';
+    position: absolute;
+    top: -16px;
+    right: -16px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 212, 163, 0.12) 0%, transparent 70%);
+  }
+
+  .energy-card:active, .vip-card:active {
+    transform: scale(0.98);
+  }
+
+  .energy-icon-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--accent);
+  }
+
+  .energy-num {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+
+  .energy-unit {
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 400;
+    margin-left: 3px;
+    letter-spacing: 1px;
+  }
+
+  .energy-label {
+    font-size: 10px;
+    color: var(--text-sub);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .energy-progress {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 0.5px solid rgba(255, 212, 163, 0.15);
+    font-size: 10px;
+    color: var(--text-mute);
+    letter-spacing: 0.3px;
+    line-height: 1.4;
+  }
+
+  .energy-progress .streak-num {
+    color: var(--accent);
+    font-weight: 500;
+    font-family: var(--display);
+    margin: 0 1px;
+  }
+
+  /* VIP 卡片 */
+  .vip-card {
+    background: linear-gradient(135deg, #4a3a5f 0%, #2d2740 100%);
+    border-radius: 14px;
+    padding: 14px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 0.5px solid rgba(255, 212, 163, 0.2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vip-card::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, rgba(255, 212, 163, 0.15) 0%, transparent 70%);
+  }
+
+  .vip-icon-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .vip-icon {
+    font-size: 14px;
+  }
+
+  .vip-title {
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  .vip-text {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--text-main);
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+    line-height: 1.3;
+  }
+
+  .vip-sub {
+    font-size: 11px;
+    color: var(--text-sub);
+    letter-spacing: 0.5px;
+  }
+
+  /* ============ 梦境统计 ============ */
+  .stats-row {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 14px 4px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+  }
+
+  .stat-block {
+    flex: 1;
+    text-align: center;
+    padding: 0 8px;
+  }
+
+  .stat-block-num {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+
+  .stat-block.streak .stat-block-num {
+    font-size: 22px;
+  }
+
+  .stat-block-label {
+    font-size: 11px;
+    color: var(--text-sub);
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+
+  .stat-divider {
+    width: 0.5px;
+    height: 32px;
+    background: var(--line-soft);
+  }
+
+  /* ============ 通用模块 ============ */
+  .module {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+    margin-bottom: 12px;
+  }
+
+  .module-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .module-title {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--text-main);
+    font-weight: 500;
+    letter-spacing: 2px;
+  }
+
+  .module-action {
+    font-size: 12px;
+    color: var(--text-mute);
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+  }
+
+  .module-action:hover {
+    color: var(--accent);
+  }
+
+  /* ============ 梦境足迹（月历视图） ============ */
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .calendar-nav {
+    background: transparent;
+    border: none;
+    color: var(--text-sub);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+
+  .calendar-nav:hover {
+    color: var(--accent);
+    background: var(--bg-inner);
+  }
+
+  .calendar-nav:disabled {
+    color: var(--line-soft);
+    cursor: not-allowed;
+  }
+
+  .calendar-month {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--text-main);
+    font-weight: 500;
+    letter-spacing: 2px;
+  }
+
+  .calendar-month-en {
+    font-family: var(--display);
+    font-size: 11px;
+    color: var(--text-mute);
+    letter-spacing: 1px;
+    font-style: italic;
+    margin-top: 1px;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .calendar-weekday {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-mute);
+    padding: 6px 0;
+    letter-spacing: 1px;
+    font-family: var(--serif);
+  }
+
+  .calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: var(--display);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-faint);
+    background: transparent;
+    position: relative;
+  }
+
+  .calendar-day:hover {
+    background: var(--bg-inner);
+    color: var(--text-main);
+  }
+
+  .calendar-day.empty {
+    cursor: default;
+  }
+
+  .calendar-day.empty:hover {
+    background: transparent;
+  }
+
+  .calendar-day.has-dream {
+    color: var(--text-main);
+    font-weight: 500;
+  }
+
+  /* 5 级色阶：blank=空白梦 / 1次 / 2次 / 3+次 */
+  .calendar-day.level-blank {
+    background: rgba(184, 168, 201, 0.18);
+    border: 0.5px dashed var(--text-mute);
+    color: var(--text-sub);
+    font-weight: 400;
+  }
+  .calendar-day.level-1 { background: rgba(255, 212, 163, 0.35); color: var(--bg-deep); font-weight: 600; }
+  .calendar-day.level-2 { background: rgba(255, 212, 163, 0.65); color: var(--bg-deep); font-weight: 600; }
+  .calendar-day.level-3 { background: var(--accent); color: var(--bg-deep); font-weight: 600; }
+
+  .calendar-day.today {
+    border: 1.5px solid var(--accent);
+  }
+
+  .calendar-day.future {
+    color: var(--line-soft);
+    cursor: not-allowed;
+  }
+
+  .calendar-day.future:hover {
+    background: transparent;
+  }
+
+  /* 月历底部小图例 */
+  .calendar-legend {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding: 0 2px;
+    font-size: 9px;
+    color: var(--text-mute);
+    gap: 4px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .calendar-legend-cell {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ============ 成就徽章 ============ */
+  .badges-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px 4px;
+  }
+
+  .badge-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .badge-item:active {
+    transform: scale(0.95);
+  }
+
+  .badge-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--bg-inner), var(--bg-card-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.5px solid var(--line-soft);
+    transition: all 0.2s;
+    position: relative;
+    color: var(--text-sub);
+  }
+
+  .badge-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .badge-item.unlocked .badge-icon {
+    background: linear-gradient(135deg, rgba(255, 212, 163, 0.2), rgba(255, 212, 163, 0.05));
+    border-color: rgba(255, 212, 163, 0.5);
+    box-shadow: 0 0 16px rgba(255, 212, 163, 0.15);
+    color: var(--accent);
+  }
+
+  .badge-item.locked .badge-icon {
+    color: var(--text-mute);
+    opacity: 0.55;
+  }
+
+  .badge-poetic {
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--accent);
+    text-align: center;
+    line-height: 1.2;
+    letter-spacing: 2px;
+    font-weight: 500;
+    margin-top: 1px;
+  }
+
+  .badge-item.locked .badge-poetic {
+    color: var(--text-sub);
+    opacity: 0.7;
+  }
+
+  .badge-name {
+    font-family: var(--sans);
+    font-size: 9px;
+    color: var(--text-mute);
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: 0.3px;
+    font-weight: 300;
+  }
+
+  .badge-item.locked .badge-name {
+    color: var(--text-mute);
+  }
+
+  .badge-progress {
+    font-size: 9px;
+    color: var(--text-mute);
+    font-family: var(--display);
+    letter-spacing: 0.3px;
+    margin-top: -2px;
+  }
+
+  .badge-item.unlocked .badge-progress {
+    color: var(--accent);
+  }
+
+  /* ============ 设置列表 ============ */
+  .settings-list .module {
+    padding: 0;
+  }
+
+  .setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border-bottom: 0.5px solid var(--line-soft);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .setting-item:last-child {
+    border-bottom: none;
+  }
+
+  .setting-item:active {
+    background: var(--bg-card-2);
+  }
+
+  .setting-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .setting-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--bg-inner);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--text-sub);
+  }
+
+  .setting-name {
+    font-size: 14px;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+  }
+
+  .setting-arrow {
+    color: var(--text-mute);
+    font-size: 16px;
+  }
+
+  /* ============ 底部 Tab ============ */
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(30, 26, 46, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 0.5px solid var(--line-soft);
+    z-index: 100;
+    padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .tab-bar-inner {
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: relative;
+  }
+
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    background: transparent;
+    border: none;
+  }
+
+  .tab-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--text-mute);
+    transition: color 0.2s;
+  }
+
+  .tab-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+  }
+
+  .tab-label {
+    font-size: 10px;
+    color: var(--text-mute);
+    letter-spacing: 2px;
+    transition: color 0.2s;
+  }
+
+  .tab-item.active .tab-icon,
+  .tab-item.active .tab-label {
+    color: var(--accent);
+  }
+
+  .tab-item.active .tab-icon svg path,
+  .tab-item.active .tab-icon svg circle {
+    stroke-width: 2;
+  }
+
+  .tab-add {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 300;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(255, 212, 163, 0.25), 0 0 0 4px rgba(255, 212, 163, 0.08);
+    margin: -22px 12px 0;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .tab-add:active {
+    transform: scale(0.95);
+  }
+
+  .tab-add::before {
+    content: '+';
+    line-height: 1;
+    margin-top: -3px;
+  }
+
+  /* ============ 弹窗 Modal ============ */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 13, 24, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.25s ease-out;
+  }
+
+  .modal-overlay.show {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal-content {
+    background: var(--bg-card);
+    border: 0.5px solid var(--line-soft);
+    border-radius: 18px;
+    padding: 28px 24px 24px;
+    max-width: 360px;
+    width: 100%;
+    position: relative;
+    animation: modalUp 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  @keyframes modalUp {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: transparent;
+    border: none;
+    color: var(--text-mute);
+    font-size: 22px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+
+  .modal-close:hover {
+    background: var(--bg-inner);
+    color: var(--accent);
+  }
+
+  .modal-title {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 6px;
+    letter-spacing: 3px;
+    font-weight: 500;
+  }
+
+  .modal-subtitle {
+    font-family: var(--display);
+    font-size: 11px;
+    color: var(--text-mute);
+    text-align: center;
+    letter-spacing: 2px;
+    font-style: italic;
+    margin-bottom: 22px;
+  }
+
+  .modal-section {
+    margin-bottom: 18px;
+  }
+
+  .modal-section-title {
+    font-size: 12px;
+    color: var(--text-sub);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .modal-rule {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 0;
+    font-size: 13px;
+    color: var(--text-main);
+    line-height: 1.6;
+  }
+
+  .modal-rule-bullet {
+    color: var(--accent);
+    flex-shrink: 0;
+    line-height: 1.6;
+  }
+
+  /* 弹窗里内联展示的 SVG 图标（替代"星星""月亮"等文字） */
+  .modal-rule .inline-icon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .inline-icon .lvl-svg {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+  }
+
+  /* 弹窗顶部的大图标 */
+  .lvl-svg-big {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .modal-rule-num {
+    color: var(--accent);
+    font-family: var(--display);
+    font-weight: 500;
+    margin: 0 2px;
+  }
+
+  .modal-divider {
+    height: 0.5px;
+    background: var(--line-soft);
+    margin: 16px 0;
+  }
+
+  .modal-action {
+    width: 100%;
+    padding: 12px;
+    border-radius: 24px;
+    background: var(--accent);
+    color: var(--bg-deep);
+    border: none;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    cursor: pointer;
+    margin-top: 18px;
+    transition: all 0.2s;
+  }
+
+  .modal-action:active {
+    transform: scale(0.97);
+  }
+
+  .modal-vip-price {
+    font-family: var(--display);
+    font-size: 28px;
+    color: var(--accent);
+    text-align: center;
+    margin: 8px 0 4px;
+    letter-spacing: 2px;
+    font-weight: 500;
+  }
+
+  .modal-vip-price-sub {
+    text-align: center;
+    color: var(--text-mute);
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  .user-header, .top-cards, .stats-row, .module {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fadeUp 0.5s ease-out forwards;
+  }
+
+  .user-header { animation-delay: 0.05s; }
+  .top-cards { animation-delay: 0.12s; }
+  .stats-row { animation-delay: 0.20s; }
+  .module:nth-of-type(1) { animation-delay: 0.28s; }
+  .module:nth-of-type(2) { animation-delay: 0.36s; }
+  .module:nth-of-type(3) { animation-delay: 0.44s; }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- 全局 SVG 渐变定义（供等级图标复用） -->
+<svg width="0" height="0" style="position: absolute;" aria-hidden="true">
+  <defs>
+    <linearGradient id="grad-star" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd4f0"/>
+      <stop offset="50%" stop-color="#d4b8ff"/>
+      <stop offset="100%" stop-color="#a890e0"/>
+    </linearGradient>
+    <linearGradient id="grad-moon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e0f0ff"/>
+      <stop offset="50%" stop-color="#b8d8f0"/>
+      <stop offset="100%" stop-color="#8aa8d0"/>
+    </linearGradient>
+    <radialGradient id="grad-sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff5d4"/>
+      <stop offset="60%" stop-color="#ffd4a3"/>
+      <stop offset="100%" stop-color="#ffaa66"/>
+    </radialGradient>
+    <linearGradient id="grad-crown" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffd4f0"/>
+      <stop offset="60%" stop-color="#ff9ec0"/>
+      <stop offset="100%" stop-color="#e070a0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- 背景星点 -->
+<div class="stars">
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+  <div class="star"></div>
+</div>
+
+<div class="container">
+
+  <!-- 顶部用户信息 -->
+  <div class="user-header">
+    <div class="avatar-wrap">
+      <div class="avatar" onclick="alert('修改头像 / 上传照片（待开发）')" id="avatar">林</div>
+    </div>
+    <div class="user-info">
+      <div class="user-name">
+        萌娜丽傻
+        <span class="user-edit-icon" onclick="alert('编辑昵称（待开发）')">✎</span>
+      </div>
+      <div class="user-bio">在这里记录和分享我的梦境故事 ✨</div>
+      <div class="user-level" id="userLevel" onclick="showLevelModal()">
+        <!-- JS 动态填充等级图标 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 梦境能量 + 会员卡 -->
+  <div class="top-cards">
+    <!-- 梦境能量石 -->
+    <div class="energy-card" onclick="showEnergyModal()">
+      <div class="energy-icon-row">
+        <span>✦</span>
+        <span style="font-size: 11px; letter-spacing: 1px; color: var(--text-sub);">梦境能量石</span>
+      </div>
+      <div class="energy-num">20<span class="energy-unit">颗</span></div>
+      <div class="energy-label">10 颗换一次梦境分析</div>
+      <div class="energy-progress">已连记 <span class="streak-num">7</span> 天 · 再 <span class="streak-num">3</span> 天 +5 颗</div>
+    </div>
+
+    <!-- 会员卡 -->
+    <div class="vip-card" onclick="showVipModal()">
+      <div class="vip-icon-row">
+        <span class="vip-icon">👑</span>
+        <span class="vip-title">会员特权</span>
+      </div>
+      <div class="vip-text">¥9.9 / 月起</div>
+      <div class="vip-sub">每月 30 次梦境分析 ›</div>
+    </div>
+  </div>
+
+  <!-- 梦境统计 -->
+  <div class="stats-row">
+    <div class="stat-block">
+      <div class="stat-block-num">12</div>
+      <div class="stat-block-label">记录天数</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-block">
+      <div class="stat-block-num">28</div>
+      <div class="stat-block-label">总梦境</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-block streak">
+      <div class="stat-block-num">🔥 7</div>
+      <div class="stat-block-label">连续天数</div>
+    </div>
+  </div>
+
+  <!-- 梦境足迹（月历视图） -->
+  <div class="module">
+    <div class="module-header">
+      <div class="module-title">梦境足迹</div>
+    </div>
+
+    <!-- 月份切换 -->
+    <div class="calendar-header">
+      <button class="calendar-nav" onclick="changeMonth(-1)" id="prevBtn">‹</button>
+      <div style="text-align: center;">
+        <div class="calendar-month" id="calendarMonth">2026 年 4 月</div>
+        <div class="calendar-month-en" id="calendarMonthEn">APRIL · 2026</div>
+      </div>
+      <button class="calendar-nav" onclick="changeMonth(1)" id="nextBtn">›</button>
+    </div>
+
+    <!-- 月历主体 -->
+    <div class="calendar-grid" id="calendarGrid">
+      <!-- 由 JS 动态生成 -->
+    </div>
+
+    <!-- 色块含义说明 -->
+    <div class="calendar-legend">
+      <div class="legend-item">
+        <span class="calendar-legend-cell" style="background: var(--bg-inner);"></span>
+        <span>未记录</span>
+      </div>
+      <div class="legend-item">
+        <span class="calendar-legend-cell" style="background: rgba(184, 168, 201, 0.3); border: 0.5px dashed var(--text-mute);"></span>
+        <span>空白梦</span>
+      </div>
+      <div class="legend-item">
+        <span class="calendar-legend-cell" style="background: rgba(255, 212, 163, 0.35);"></span>
+        <span>1 个梦</span>
+      </div>
+      <div class="legend-item">
+        <span class="calendar-legend-cell" style="background: rgba(255, 212, 163, 0.65);"></span>
+        <span>2 个梦</span>
+      </div>
+      <div class="legend-item">
+        <span class="calendar-legend-cell" style="background: var(--accent);"></span>
+        <span>3 个+</span>
+      </div>
+    </div>
+  </div>
+
+
+
+
+</div>
+
+<!-- ============ 弹窗 Modal ============ -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="modal-body" id="modalBody">
+      <!-- 内容由 JS 填充 -->
+    </div>
+  </div>
+</div>
+
+<!-- 底部 Tab -->
+<div class="tab-bar">
+  <div class="tab-bar-inner">
+    <button class="tab-item" onclick="window.location.href='FINAL_01_首页.html'">
+      <span class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="tab-label">梦境</span>
+    </button>
+
+    <button class="tab-add" onclick="window.location.href='FINAL_02_记录梦境.html'" title="记录梦境"></button>
+
+    <button class="tab-item active">
+      <span class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M4 21c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="tab-label">我的</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  // ============ 用户等级（QQ 标准）============
+  // 演示用：用户已记录天数（实际应该从后端获取）
+  const userDays = 150;  // 改这个数字可以看不同等级
+
+  // 4 个等级的 SVG 图标（梦幻 2D 风：粉紫渐变 + 奶油描边 + 小星星点缀）
+  // 渐变 defs 在 body 开头全局定义，这里只引用
+  const LEVEL_ICONS = {
+    star: `<svg class="lvl-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 4 L19.5 12.5 L28.5 13.5 L21.5 19.5 L23.5 28 L16 23 L8.5 28 L10.5 19.5 L3.5 13.5 L12.5 12.5 Z"
+            fill="url(#grad-star)" stroke="#fff5e8" stroke-width="1.2" stroke-linejoin="round"/>
+      <circle cx="6" cy="6" r="0.8" fill="#fff5e8" opacity="0.85"/>
+      <circle cx="26" cy="8" r="0.6" fill="#fff5e8" opacity="0.8"/>
+      <circle cx="27" cy="22" r="0.7" fill="#fff5e8" opacity="0.85"/>
+      <circle cx="14" cy="16" r="1" fill="#fff5e8" opacity="0.9"/>
+    </svg>`,
+
+    moon: `<svg class="lvl-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22 16 A 9 9 0 1 1 13 7 A 7 7 0 0 0 22 16 Z"
+            fill="url(#grad-moon)" stroke="#fff5e8" stroke-width="1.2" stroke-linejoin="round"/>
+      <circle cx="14" cy="14" r="0.8" fill="#fff5e8" opacity="0.9"/>
+      <circle cx="11" cy="20" r="0.6" fill="#fff5e8" opacity="0.8"/>
+      <circle cx="16" cy="22" r="0.7" fill="#fff5e8" opacity="0.85"/>
+      <circle cx="27" cy="6" r="0.7" fill="#ffd4f0" opacity="0.85"/>
+      <circle cx="6" cy="26" r="0.6" fill="#ffd4f0" opacity="0.8"/>
+    </svg>`,
+
+    sun: `<svg class="lvl-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#fff5e8" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" fill="url(#grad-sun)">
+        <path d="M16 2 L17 6 L15 6 Z"/>
+        <path d="M16 26 L17 30 L15 30 Z"/>
+        <path d="M2 16 L6 17 L6 15 Z"/>
+        <path d="M26 16 L30 17 L30 15 Z"/>
+        <path d="M6 6 L9 8 L8 9 Z"/>
+        <path d="M24 24 L26 26 L23 24 Z"/>
+        <path d="M26 6 L23 9 L24 8 Z"/>
+        <path d="M6 26 L9 23 L8 24 Z"/>
+      </g>
+      <circle cx="16" cy="16" r="7" fill="url(#grad-sun)" stroke="#fff5e8" stroke-width="1.2"/>
+      <circle cx="13" cy="13" r="1.2" fill="#fff5e8" opacity="0.85"/>
+    </svg>`,
+
+    crown: `<svg class="lvl-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 22 L7 12 L12 17 L16 8 L20 17 L25 12 L27 22 Z"
+            fill="url(#grad-crown)" stroke="#fff5e8" stroke-width="1.2" stroke-linejoin="round"/>
+      <rect x="5" y="22" width="22" height="3" rx="1" fill="url(#grad-crown)" stroke="#fff5e8" stroke-width="1.2"/>
+      <circle cx="7" cy="12" r="1.5" fill="#ffd4f0" stroke="#fff5e8" stroke-width="0.8"/>
+      <circle cx="16" cy="8" r="1.5" fill="#ffd4f0" stroke="#fff5e8" stroke-width="0.8"/>
+      <circle cx="25" cy="12" r="1.5" fill="#ffd4f0" stroke="#fff5e8" stroke-width="0.8"/>
+      <circle cx="13" cy="20" r="0.9" fill="#fff5e8" opacity="0.9"/>
+      <circle cx="19" cy="20" r="0.9" fill="#fff5e8" opacity="0.9"/>
+    </svg>`
+  };
+
+  // 计算等级图标
+  function calculateLevel(days) {
+    // 没到 30 天：还没等级
+    if (days < 30) {
+      return {
+        iconHtml: '',
+        empty: true,
+        nextLevelKey: 'star',
+        nextLevelDays: 30 - days,
+        currentTier: '尚未点亮'
+      };
+    }
+
+    // 计算各级数量（同 QQ 标准）
+    const totalStars = Math.floor(days / 30);
+
+    const crowns = Math.floor(totalStars / 64);
+    let remain = totalStars - crowns * 64;
+
+    const suns = Math.floor(remain / 16);
+    remain = remain - suns * 16;
+
+    const moons = Math.floor(remain / 4);
+    remain = remain - moons * 4;
+
+    const stars = remain;
+
+    // 拼接图标 HTML（从高到低显示）
+    let iconHtml = '';
+    for (let i = 0; i < crowns; i++) iconHtml += LEVEL_ICONS.crown;
+    for (let i = 0; i < suns; i++) iconHtml += LEVEL_ICONS.sun;
+    for (let i = 0; i < moons; i++) iconHtml += LEVEL_ICONS.moon;
+    for (let i = 0; i < stars; i++) iconHtml += LEVEL_ICONS.star;
+
+    // 计算下一等级
+    let nextLevelKey, nextLevelDays;
+    if (totalStars < 64 * 4) {
+      const nextStars = totalStars + 1;
+      nextLevelDays = nextStars * 30 - days;
+
+      const nextCrowns = Math.floor(nextStars / 64);
+      const nextSuns = Math.floor((nextStars % 64) / 16);
+      const nextMoons = Math.floor((nextStars % 16) / 4);
+
+      if (nextCrowns > crowns) nextLevelKey = 'crown';
+      else if (nextSuns > suns) nextLevelKey = 'sun';
+      else if (nextMoons > moons) nextLevelKey = 'moon';
+      else nextLevelKey = 'star';
+    } else {
+      nextLevelKey = null;
+      nextLevelDays = 0;
+    }
+
+    let currentTier;
+    if (crowns > 0) currentTier = '皇冠级';
+    else if (suns > 0) currentTier = '太阳级';
+    else if (moons > 0) currentTier = '月亮级';
+    else currentTier = '星星级';
+
+    return { iconHtml, empty: false, nextLevelKey, nextLevelDays, currentTier, totalStars };
+  }
+
+  // 渲染顶部等级图标
+  function renderUserLevel() {
+    const levelEl = document.getElementById('userLevel');
+    const level = calculateLevel(userDays);
+
+    if (level.empty) {
+      levelEl.innerHTML = `<span class="level-empty">距首颗 ${LEVEL_ICONS.star} 还差 ${level.nextLevelDays} 天</span>`;
+    } else {
+      levelEl.innerHTML = level.iconHtml;
+    }
+  }
+
+  // ============ 弹窗 Modal ============
+  function showModal(html) {
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+  }
+
+  // 能量石详情弹窗
+  function showEnergyModal() {
+    const html = `
+      <div class="modal-title">梦境能量石</div>
+      <div class="modal-subtitle">DREAM CRYSTAL</div>
+
+      <div style="text-align: center; padding: 4px 0 8px;">
+        <div style="font-size: 36px; line-height: 1; color: var(--accent); font-family: var(--display); font-weight: 500; letter-spacing: 2px;">
+          20<span style="font-family: var(--serif); font-size: 18px; font-weight: 400;">颗</span>
+        </div>
+        <div style="color: var(--text-mute); font-size: 11px; margin-top: 6px; letter-spacing: 1px;">
+          10 颗换一次梦境分析
+        </div>
+      </div>
+
+      <div class="modal-divider"></div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">如何获取</div>
+        <div class="modal-rule">
+          <span class="modal-rule-bullet">·</span>
+          <span>首次注册即赠 <span class="modal-rule-num">10</span> 颗</span>
+        </div>
+        <div class="modal-rule">
+          <span class="modal-rule-bullet">·</span>
+          <span>每日记录梦境 +<span class="modal-rule-num">1</span> 颗</span>
+        </div>
+        <div class="modal-rule">
+          <span class="modal-rule-bullet">·</span>
+          <span>连续记录满 <span class="modal-rule-num">10</span> 天，额外 +<span class="modal-rule-num">5</span> 颗</span>
+        </div>
+        <div class="modal-rule">
+          <span class="modal-rule-bullet">·</span>
+          <span>连续记录满 <span class="modal-rule-num">20</span> 天,额外 +<span class="modal-rule-num">12</span> 颗</span>
+        </div>
+      </div>
+    `;
+    showModal(html);
+  }
+
+  // 会员详情弹窗
+  function showVipModal() {
+    const html = `
+      <div class="modal-title">会员特权</div>
+      <div class="modal-subtitle">PREMIUM MEMBER</div>
+
+      <div class="modal-vip-price">¥9.9 / 月</div>
+      <div class="modal-vip-price-sub">¥98 / 年（更划算）</div>
+
+      <div class="modal-divider"></div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">解锁特权</div>
+        <div class="modal-rule">
+          <span class="modal-rule-bullet">✦</span>
+          <span>每月 <span class="modal-rule-num">30</span> 次梦境分析</span>
+        </div>
+        <div class="modal-rule">
+          <span class="modal-rule-bullet">✦</span>
+          <span>高级数据可视化</span>
+        </div>
+        <div class="modal-rule">
+          <span class="modal-rule-bullet">✦</span>
+          <span>月度梦境报告长图</span>
+        </div>
+        <div class="modal-rule">
+          <span class="modal-rule-bullet">✦</span>
+          <span>完整人格图鉴</span>
+        </div>
+      </div>
+
+      <button class="modal-action" onclick="alert('开通会员（待接入支付）'); closeModal();">立即开通</button>
+    `;
+    showModal(html);
+  }
+
+  // 等级详情弹窗
+  function showLevelModal() {
+    const level = calculateLevel(userDays);
+
+    let html = `
+      <div class="modal-title">梦境录等级</div>
+      <div class="modal-subtitle">DREAM JOURNAL LEVEL</div>
+    `;
+
+    if (level.empty) {
+      html += `
+        <div style="text-align: center; padding: 12px 0 8px;">
+          <div style="margin-bottom: 14px; opacity: 0.5; transform: scale(2);">${LEVEL_ICONS.star}</div>
+          <div style="color: var(--text-sub); font-size: 13px; line-height: 1.9; padding: 0 8px;">
+            已累计记录 <span class="modal-rule-num">${userDays}</span> 天梦境日志，<br>
+            距点亮首颗 <span class="inline-icon">${LEVEL_ICONS.star}</span> 还差 <span class="modal-rule-num">${level.nextLevelDays}</span> 天
+          </div>
+        </div>
+      `;
+    } else {
+      html += `
+        <div style="text-align: center; padding: 8px 0;">
+          <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-bottom: 12px; flex-wrap: wrap;">
+            ${level.iconHtml.replace(/class="lvl-svg"/g, 'class="lvl-svg lvl-svg-big"')}
+          </div>
+          <div style="color: var(--accent); font-family: var(--serif); font-size: 14px; letter-spacing: 2px; margin-bottom: 12px;">${level.currentTier}</div>
+          <div style="color: var(--text-sub); font-size: 13px; line-height: 1.9; padding: 0 8px;">
+            已累计记录 <span class="modal-rule-num">${userDays}</span> 天梦境日志，<br>
+            ${level.nextLevelKey
+              ? `距添加下一颗 <span class="inline-icon">${LEVEL_ICONS[level.nextLevelKey]}</span> 还差 <span class="modal-rule-num">${level.nextLevelDays}</span> 天`
+              : '已达最高等级'}
+          </div>
+        </div>
+      `;
+    }
+
+    html += `<div class="modal-divider"></div>`;
+    html += `
+      <div class="modal-section">
+        <div class="modal-section-title">等级换算</div>
+        <div class="modal-rule">
+          <span class="inline-icon">${LEVEL_ICONS.star}</span>
+          <span>1 颗星 = 累计记录 <span class="modal-rule-num">30</span> 天</span>
+        </div>
+        <div class="modal-rule">
+          <span class="inline-icon">${LEVEL_ICONS.moon}</span>
+          <span>1 个月亮 = 4 颗星 = 累计 <span class="modal-rule-num">120</span> 天</span>
+        </div>
+        <div class="modal-rule">
+          <span class="inline-icon">${LEVEL_ICONS.sun}</span>
+          <span>1 个太阳 = 4 个月亮 = 累计 <span class="modal-rule-num">480</span> 天</span>
+        </div>
+        <div class="modal-rule">
+          <span class="inline-icon">${LEVEL_ICONS.crown}</span>
+          <span>1 个皇冠 = 4 个太阳 = 累计 <span class="modal-rule-num">1920</span> 天</span>
+        </div>
+      </div>
+    `;
+
+    showModal(html);
+  }
+
+  // ============ 月历视图 ============
+  // 当前查看的年月
+  const today = new Date(2026, 3, 23); // 2026 年 4 月 23 日（演示用）
+  let viewYear = today.getFullYear();
+  let viewMonth = today.getMonth(); // 0-11
+
+  // 模拟数据：每个日期对应记录情况
+  // null/undefined = 未记录；'blank' = 空白梦（做了梦但忘了）；数字 = 具体几个梦
+  const dreamData = {
+    '2026-04': {
+      1: 1, 3: 2, 5: 'blank', 7: 3, 9: 1,
+      11: 2, 14: 'blank', 16: 4, 17: 2,
+      19: 1, 20: 3, 22: 2, 23: 4
+    },
+    '2026-03': {
+      2: 1, 4: 2, 6: 'blank', 8: 3, 11: 2,
+      13: 1, 15: 'blank', 17: 4, 19: 1, 22: 3,
+      24: 1, 27: 2, 29: 'blank'
+    },
+    '2026-02': {
+      3: 1, 5: 2, 8: 'blank', 11: 2, 14: 3,
+      18: 1, 21: 2, 25: 'blank', 28: 2
+    }
+  };
+
+  function getMonthEnglish(m) {
+    const names = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+                   'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+    return names[m];
+  }
+
+  function renderCalendar() {
+    const grid = document.getElementById('calendarGrid');
+    const monthLabel = document.getElementById('calendarMonth');
+    const monthLabelEn = document.getElementById('calendarMonthEn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    monthLabel.textContent = `${viewYear} 年 ${viewMonth + 1} 月`;
+    monthLabelEn.textContent = `${getMonthEnglish(viewMonth)} · ${viewYear}`;
+
+    // 不允许查看未来月份
+    const isCurrentMonth =
+      viewYear === today.getFullYear() && viewMonth === today.getMonth();
+    nextBtn.disabled = isCurrentMonth;
+
+    // 当月有几天
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    // 当月第一天是周几（0 = 周日，1 = 周一...）
+    const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+    // 转换为周一开始（中国习惯）：周一=0，周日=6
+    const firstDayMonStart = firstDay === 0 ? 6 : firstDay - 1;
+
+    // 这个月的数据
+    const monthKey = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}`;
+    const monthData = dreamData[monthKey] || {};
+
+    let html = '';
+
+    // 周标签（周一到周日）
+    const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
+    weekdays.forEach(w => {
+      html += `<div class="calendar-weekday">${w}</div>`;
+    });
+
+    // 前面的空格子
+    for (let i = 0; i < firstDayMonStart; i++) {
+      html += '<div class="calendar-day empty"></div>';
+    }
+
+    // 日期格子
+    for (let day = 1; day <= daysInMonth; day++) {
+      const isToday =
+        viewYear === today.getFullYear() &&
+        viewMonth === today.getMonth() &&
+        day === today.getDate();
+
+      const isFuture =
+        viewYear === today.getFullYear() &&
+        viewMonth === today.getMonth() &&
+        day > today.getDate();
+
+      const value = monthData[day];
+
+      // 判断这一天的状态
+      let level = null;  // null = 未记录
+      let displayText = '';
+      if (value === 'blank') {
+        level = 'blank';
+        displayText = '空白梦（记得做了梦但忘了内容）';
+      } else if (typeof value === 'number') {
+        if (value === 1) level = 1;
+        else if (value === 2) level = 2;
+        else if (value >= 3) level = 3;
+        displayText = `${value} 个梦`;
+      }
+
+      let classes = 'calendar-day';
+      if (level !== null && !isFuture) {
+        classes += ` has-dream level-${level}`;
+      }
+      if (isToday) classes += ' today';
+      if (isFuture) classes += ' future';
+
+      const onclick = !isFuture && level !== null
+        ? `onclick="alert('${viewYear}年${viewMonth + 1}月${day}日：${displayText}')"`
+        : '';
+
+      html += `<div class="${classes}" ${onclick}>${day}</div>`;
+    }
+
+    grid.innerHTML = html;
+  }
+
+  function changeMonth(delta) {
+    // 不允许往未来切
+    const newDate = new Date(viewYear, viewMonth + delta, 1);
+    if (newDate > new Date(today.getFullYear(), today.getMonth(), 1)) {
+      return;
+    }
+
+    viewMonth += delta;
+    if (viewMonth < 0) {
+      viewMonth = 11;
+      viewYear -= 1;
+    } else if (viewMonth > 11) {
+      viewMonth = 0;
+      viewYear += 1;
+    }
+
+    renderCalendar();
+  }
+
+  // 支持左右滑动切换月份（移动端）
+  let touchStartX = 0;
+  const calendarGrid = document.getElementById('calendarGrid');
+  calendarGrid.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  });
+  calendarGrid.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) {
+      changeMonth(dx > 0 ? -1 : 1);
+    }
+  });
+
+  renderCalendar();
+  renderUserLevel();
+</script>
+
+</body>
+</html>
